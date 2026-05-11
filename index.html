@@ -1,723 +1,1187 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZURETH | The Operating System for Modern Real Estate</title>
+    <title>ZURETH | The Smart Operating System for Modern Real Estate</title>
     
+    <!-- Fonts: Sora & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Icons (Lucide via CDN for minimal, premium icons) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        /* ========================================================
-           DESIGN TOKENS & ARCHITECTURE
-           ======================================================== */
+        /* =========================================
+           DESIGN SYSTEM & VARIABLES
+           ========================================= */
         :root {
             /* Light Mode */
-            --bg-light: #F8FAFC;
-            --surface-light: #F1F5F9;
-            --text-light: #0B1220;
-            --text-muted-light: #475569;
-            --border-light: rgba(11, 18, 32, 0.08);
-            --glass-light: rgba(241, 245, 249, 0.7);
-            
-            /* Dark Mode */
-            --bg-dark: #0B1220;
-            --surface-dark: #131B2C; /* Rich charcoal */
-            --text-dark: #F8FAFC;
-            --text-muted-dark: #94A3B8;
-            --border-dark: rgba(248, 250, 252, 0.08);
-            --glass-dark: rgba(19, 27, 44, 0.7);
-
-            /* Brand Core */
+            --bg-color: #F8FAFC;
+            --card-bg: #F1F5F9;
+            --text-primary: #0B1220;
+            --text-secondary: #475569;
+            --border-color: #E2E8F0;
             --primary: #1D4ED8;
-            --primary-glow: rgba(29, 78, 216, 0.4);
-            --highlight: #14B8A6;
-            --highlight-glow: rgba(20, 184, 166, 0.4);
-            --danger: #EF4444;
-
-            /* Typography */
-            --font-heading: 'Sora', sans-serif;
-            --font-body: 'Inter', sans-serif;
-
-            /* Motion Physics */
-            --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
-            --transition-fast: 0.2s var(--ease-cinematic);
-            --transition-med: 0.5s var(--ease-cinematic);
-            --transition-slow: 1s var(--ease-cinematic);
-
-            /* Geometry */
-            --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 24px;
-        }
-
-        /* Dynamic Theme Application */
-        [data-theme="light"] {
-            --bg: var(--bg-light);
-            --surface: var(--surface-light);
-            --text: var(--text-light);
-            --text-muted: var(--text-muted-light);
-            --border: var(--border-light);
-            --glass: var(--glass-light);
+            --primary-hover: #1e3a8a;
+            --accent: #14B8A6;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-float: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+            --glass-bg: rgba(248, 250, 252, 0.8);
         }
 
         [data-theme="dark"] {
-            --bg: var(--bg-dark);
-            --surface: var(--surface-dark);
-            --text: var(--text-dark);
-            --text-muted: var(--text-muted-dark);
-            --border: var(--border-dark);
-            --glass: var(--glass-dark);
+            /* Dark Mode */
+            --bg-color: #0B1220;
+            --card-bg: #111827;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border-color: #1E293B;
+            --primary: #1D4ED8;
+            --primary-hover: #3B82F6;
+            --accent: #14B8A6;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            --shadow-float: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+            --glass-bg: rgba(11, 18, 32, 0.8);
         }
 
-        /* ========================================================
-           GLOBAL RESETS
-           ======================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        /* =========================================
+           GLOBAL STYLES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+        }
+
         body {
-            font-family: var(--font-body);
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
-            transition: background-color var(--transition-med), color var(--transition-med);
-            -webkit-font-smoothing: antialiased;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
         }
 
-        a { text-decoration: none; color: inherit; }
-        button, input { font-family: inherit; outline: none; }
-        ul { list-style: none; }
-
-        /* ========================================================
-           ANIMATION CHOREOGRAPHY
-           ======================================================== */
-        @keyframes revealUp {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes floatAmbient {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        @keyframes pulseData {
-            0% { box-shadow: 0 0 0 0 var(--highlight-glow); }
-            70% { box-shadow: 0 0 15px 10px transparent; }
-            100% { box-shadow: 0 0 0 0 transparent; }
-        }
-
-        @keyframes bgPan {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .reveal { animation: revealUp 1.2s var(--ease-cinematic) forwards; opacity: 0; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-
-        /* ========================================================
-           COMPONENTS
-           ======================================================== */
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 4vw; }
-
-        /* Buttons */
-        .btn {
-            padding: 12px 24px;
-            border-radius: 100px;
-            font-weight: 500;
-            font-size: 0.9rem;
+        a {
+            text-decoration: none;
+            color: inherit;
             cursor: pointer;
-            transition: all var(--transition-fast);
-            border: 1px solid transparent;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            outline: none;
+            background: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Utilities */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
             gap: 8px;
         }
 
         .btn-primary {
-            background: var(--text);
-            color: var(--bg);
-        }
-
-        [data-theme="dark"] .btn-primary {
-            background: var(--primary);
+            background-color: var(--primary);
             color: #fff;
-            box-shadow: 0 8px 24px -8px var(--primary);
         }
 
         .btn-primary:hover {
+            background-color: var(--primary-hover);
             transform: translateY(-2px);
-            filter: brightness(1.1);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-            border-color: var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
 
-        .btn-secondary:hover { background: var(--border); }
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+            transform: translateY(-2px);
+        }
 
-        /* ========================================================
-           NAVIGATION (GLASSMORPHISM)
-           ======================================================== */
-        nav {
+        /* SPA Page Toggling */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           LOGO SYSTEM & LOGIC
+           ========================================= */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .brand-logo img {
+            height: 28px;
+            width: auto;
+        }
+
+        /* Logo Theme Switching */
+        .brand-logo img.logo-dark { display: none; }
+        [data-theme="dark"] .brand-logo img.logo-light { display: none; }
+        [data-theme="dark"] .brand-logo img.logo-dark { display: block; }
+
+        /* =========================================
+           PAGE: HOMEPAGE
+           ========================================= */
+        .navbar {
             position: fixed;
-            top: 0; width: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
             padding: 20px 0;
-            background: var(--glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
             z-index: 100;
+            transition: all 0.3s ease;
         }
 
-        .nav-inner {
+        .navbar.scrolled {
+            padding: 15px 0;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* LOGO SYSTEM */
-        .brand-logo {
+        .nav-links {
             display: flex;
+            gap: 32px;
             align-items: center;
-            font-family: var(--font-heading);
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
         }
 
-        /* Responsive logo sizing */
-        .brand-logo img {
-            height: 32px; /* Adjust this value to match your actual SVG dimensions */
-            width: auto;
-            transition: opacity var(--transition-fast);
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
         }
 
-        /* Default state (Starts in Dark Mode) */
-        .logo-for-light-mode {
-            display: none;
-        }
-        .logo-for-dark-mode {
-            display: block;
+        .nav-links a:hover {
+            color: var(--text-primary);
         }
 
-        /* Swaps when switched to Light Mode */
-        [data-theme="light"] .logo-for-light-mode {
-            display: block;
-        }
-        [data-theme="light"] .logo-for-dark-mode {
-            display: none;
+        .nav-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
         }
 
-        .nav-links { display: flex; gap: 32px; }
-        .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); transition: color var(--transition-fast); }
-        .nav-links a:hover { color: var(--text); }
-        .nav-actions { display: flex; align-items: center; gap: 16px; }
-
-        /* ========================================================
-           CINEMATIC HERO SECTION
-           ======================================================== */
+        /* Hero Section */
         .hero {
-            padding: 180px 0 100px;
-            position: relative;
+            padding-top: 160px;
+            padding-bottom: 80px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .ambient-light {
+        .hero::before {
+            content: '';
             position: absolute;
-            top: -20%; left: 50%;
+            top: -20%;
+            left: 50%;
             transform: translateX(-50%);
-            width: 70vw; height: 70vw;
-            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%);
-            filter: blur(120px);
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.1) 0%, transparent 70%);
             z-index: -1;
-            pointer-events: none;
+            border-radius: 50%;
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 6vw, 5.5rem);
-            max-width: 1000px;
+            font-size: 4rem;
+            max-width: 800px;
             margin: 0 auto 24px;
-            background: linear-gradient(180deg, var(--text) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
         }
 
         .hero p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
+            font-size: 1.125rem;
+            color: var(--text-secondary);
             max-width: 600px;
-            margin: 0 auto 48px;
+            margin: 0 auto 40px;
         }
 
-        /* Live Dashboard Mockup */
-        .hero-dashboard-wrapper {
-            perspective: 2000px;
-            margin-top: 80px;
-        }
-
-        .hero-dashboard {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+        /* Hero Dashboard Mock (Floating) */
+        .hero-dashboard-mock {
+            max-width: 1000px;
+            margin: 60px auto 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-float);
             padding: 24px;
-            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5);
-            transform: rotateX(12deg) translateY(0);
-            transition: transform var(--transition-slow);
-            height: 600px;
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 24px;
             text-align: left;
-            overflow: hidden;
             position: relative;
-        }
-
-        .hero-dashboard-wrapper:hover .hero-dashboard {
-            transform: rotateX(0deg) translateY(-20px);
-        }
-
-        /* Floating Analytics Widget */
-        .floating-widget {
-            position: absolute;
-            right: -20px; top: 120px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            padding: 16px 24px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             z-index: 10;
-            animation: floatAmbient 6s ease-in-out infinite;
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.5s ease;
         }
 
-        .live-indicator {
-            width: 8px; height: 8px;
-            background: var(--highlight);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: pulseData 2s infinite;
+        .hero-dashboard-mock:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-5px);
         }
 
-        /* Mockup Internals */
-        .mock-sidebar { border-right: 1px solid var(--border); padding-right: 24px; }
-        .mock-nav-item { padding: 10px 12px; margin-bottom: 8px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 12px; }
-        .mock-nav-item.active { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-        .mock-shape { width: 14px; height: 14px; border-radius: 3px; background: currentColor; opacity: 0.5; }
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mock-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .mock-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .mock-card h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .mock-value {
+            font-size: 2rem;
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px 32px;
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background-color: rgba(29, 78, 216, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Explanation Section */
+        .explanation {
+            padding: 100px 0;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .explanation-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        /* Testimonials */
+        .testimonials { padding: 100px 0; }
+        .testimonial-card {
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 64px 0 32px;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+        }
         
-        .mock-content { display: flex; flex-direction: column; gap: 20px; }
-        .mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .mock-card { background: var(--bg); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-md); }
-        .mock-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; }
-        .mock-value { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 600; }
-        
-        /* Live Chart Simulation */
-        .mock-chart { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: flex-end; gap: 8px; overflow: hidden; }
-        .chart-bar { flex: 1; background: var(--primary); opacity: 0.3; border-radius: 4px 4px 0 0; transition: height 0.5s ease; }
-        .chart-bar.highlight { background: var(--highlight); opacity: 0.8; }
-
-        /* ========================================================
-           AUTHENTICATION MODAL (SPLIT SCREEN)
-           ======================================================== */
-        .auth-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity var(--transition-med);
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
         }
 
-        .auth-overlay.active { opacity: 1; pointer-events: auto; }
+        .footer-links h4 { margin-bottom: 16px; font-size: 0.9rem; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: var(--text-secondary); font-size: 0.9rem; transition: color 0.2s;}
+        .footer-links a:hover { color: var(--primary); }
 
-        .auth-modal {
-            width: 1000px; height: 600px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            display: grid; grid-template-columns: 1fr 1fr;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform var(--transition-med);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+        /* =========================================
+           AUTH PAGES (SIGN UP & SIGN IN)
+           ========================================= */
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
         }
 
-        .auth-overlay.active .auth-modal { transform: scale(1); }
-
-        /* Auth Left - Visuals */
-        .auth-visuals {
-            background: linear-gradient(-45deg, var(--bg-dark), #0f172a, var(--primary), var(--highlight));
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0B1220, #1D4ED8);
             background-size: 400% 400%;
-            animation: bgPan 15s ease infinite;
-            padding: 40px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            color: #fff;
-            position: relative;
-        }
-
-        .auth-visuals h2 { font-size: 2.5rem; margin-bottom: 16px; }
-        .auth-visuals p { color: rgba(255,255,255,0.7); }
-
-        /* Auth Right - Form */
-        .auth-form-container {
+            animation: gradientBG 15s ease infinite;
             padding: 60px;
-            display: flex; flex-direction: column; justify-content: center;
-            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #F8FAFC;
         }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .auth-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-color);
+        }
+
+        .auth-form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form-wrapper h2 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .auth-form-wrapper p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
         .form-control {
-            width: 100%; padding: 12px 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-family: var(--font-body);
-            transition: all var(--transition-fast);
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
         }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-        
-        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
 
-        /* ========================================================
-           ENTERPRISE DASHBOARD VIEW (FULL APP)
-           ======================================================== */
-        #app-view {
-            display: none; /* Hidden initially */
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+
+        .btn-google {
+            width: 100%;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider:not(:empty)::before { margin-right: .25em; }
+        .divider:not(:empty)::after { margin-left: .25em; }
+
+        /* =========================================
+           PAGE: DASHBOARD (STATIC APP UI)
+           ========================================= */
+        .app-layout {
+            display: flex;
             height: 100vh;
-            width: 100vw;
-            background: var(--bg);
-            grid-template-columns: 260px 1fr;
+            overflow: hidden;
+            background-color: var(--bg-color);
         }
 
-        #app-view.active { display: grid; }
-
-        .app-sidebar {
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 24px;
-            display: flex; flex-direction: column;
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
         }
 
-        .app-main {
-            padding: 32px 40px;
+        .sidebar-brand {
+            padding: 0 24px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 0 16px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(29, 78, 216, 0.1);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: 72px;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            width: 300px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            margin-left: 8px;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-btn {
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard Scrollable Area */
+        .dashboard-scroll {
+            flex: 1;
             overflow-y: auto;
+            padding: 32px;
         }
 
-        .app-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
         }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 1024px) {
-            .hero-dashboard { grid-template-columns: 1fr; }
-            .mock-sidebar { display: none; }
-            .auth-modal { grid-template-columns: 1fr; width: 90%; height: auto; }
-            .auth-visuals { display: none; }
+        /* Charts & Tables Mocks */
+        .chart-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            grid-column: span 2;
         }
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .mock-grid { grid-template-columns: 1fr; }
+
+        .activity-feed {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .feed-item:last-child {
+            margin-bottom: 0; padding-bottom: 0; border-bottom: none;
+        }
+        .feed-icon {
+            background-color: rgba(20, 184, 166, 0.1);
+            color: var(--accent);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(20, 184, 166, 0.1);
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero h1 { font-size: 3rem; }
+            .features-grid, .mock-grid { grid-template-columns: 1fr; }
+            .explanation-content { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .auth-container { flex-direction: column; }
+            .auth-left { padding: 40px; min-height: 300px; }
+            .sidebar { position: absolute; transform: translateX(-100%); z-index: 1000; height: 100%; transition: transform 0.3s ease; }
+            .sidebar.open { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
 
-    <div id="public-view">
-        <nav>
-            <div class="container nav-inner">
-                
-                <div class="brand-logo">
-                    <img src="assets/zureth-logo-dark.svg" alt="ZURETH" class="logo-for-light-mode">
-                    <img src="assets/zureth-logo-light.svg" alt="ZURETH" class="logo-for-dark-mode">
-                </div>
+    <!-- Theme Toggle Button (Global floating for demo purposes) -->
+    <button onclick="toggleTheme()" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 50%; box-shadow: var(--shadow-lg);" title="Toggle Dark/Light Mode">
+        <i data-lucide="moon" id="theme-icon"></i>
+    </button>
 
-                <ul class="nav-links">
-                    <li><a href="#">Platform</a></li>
-                    <li><a href="#">Solutions</a></li>
-                    <li><a href="#">Developers</a></li>
-                    <li><a href="#">Company</a></li>
-                </ul>
+    <!-- =======================================================
+         PAGE 1: HOMEPAGE
+         ======================================================= -->
+    <div id="page-home" class="page active">
+        <!-- Navbar -->
+        <nav class="navbar" id="navbar">
+            <div class="container nav-container">
+                <a href="#" class="brand-logo" onclick="navigateTo('home')">
+                    <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
+                    <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Platform</a>
+                    <a href="#solutions">Solutions</a>
+                    <a href="#Clients">Clients</a>
+                    <a href="#pricing">Pricing</a>
+                </div>
                 <div class="nav-actions">
-                    <button class="btn btn-secondary" onclick="toggleTheme()" aria-label="Toggle Theme">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><path d="M12 4L14 2M4 12L2 14M14 14L12 12M2 2L4 4"/></svg>
-                    </button>
-                    <button class="btn btn-secondary" onclick="openAuth('signin')" style="border: none; background: transparent;">Sign In</button>
-                    <button class="btn btn-primary" onclick="openAuth('signup')">Get Started</button>
+                    <button class="btn btn-secondary" onclick="navigateTo('signin')">Sign In</button>
+                    <button class="btn btn-primary" onclick="navigateTo('signup')">Get Started</button>
                 </div>
             </div>
         </nav>
 
-        <main class="hero container">
-            <div class="ambient-light"></div>
-            
-            <h1 class="reveal">The Operating System for Modern Real Estate.</h1>
-            <p class="reveal delay-1">Intelligence for property businesses. Manage portfolios, tenants, payments, and legal documents through one frictionless, API-driven platform.</p>
-            
-            <div class="reveal delay-2" style="display: flex; gap: 16px; justify-content: center;">
-                <button class="btn btn-primary" onclick="launchApp()" style="padding: 16px 32px; font-size: 1rem;">Enter Platform</button>
-                <button class="btn btn-secondary" style="padding: 16px 32px; font-size: 1rem;">View Documentation</button>
-            </div>
-
-            <div class="hero-dashboard-wrapper reveal delay-3">
-                
-                <div class="floating-widget">
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
-                        <span class="live-indicator"></span> Real-time Transaction
-                    </div>
-                    <div style="font-family: var(--font-heading); font-weight: 600; font-size: 1.2rem;">+ ₦4,500,000</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Ikoyi Penthouse Lease • Confirmed</div>
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="container">
+                <h1>The Smart operating systmet for <span class="text-gradient">Modern Real Estate</span></h1>
+                <p>Powerful real estate infrastructure for property management, tenant operations, payments, and real-time insights. Built to scale with confidence.</p>
+                <div style="display: flex; gap: 16px; justify-content: center;">
+                    <button class="btn btn-primary" onclick="navigateTo('signup')">Get Started <i data-lucide="arrow-right" style="width: 18px;"></i></button>
+                    <button class="btn btn-secondary" onclick="navigateTo('dashboard')">View Platform</button>
                 </div>
 
-                <div class="hero-dashboard">
-                    <div class="mock-sidebar">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 16px;">WORKSPACE</div>
-                        <div class="mock-nav-item active"><div class="mock-shape"></div> Overview</div>
-                        <div class="mock-nav-item"><div class="mock-shape"></div> Properties</div>
-                        <div class="mock-nav-item"><div class="mock-shape"></div> Tenants</div>
-                        <div class="mock-nav-item"><div class="mock-shape"></div> Finances</div>
-                        <div class="mock-nav-item"><div class="mock-shape"></div> Legal Docs</div>
+                <!-- Hero Dashboard Mock -->
+                <div class="hero-dashboard-mock">
+                    <div class="mock-header">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">OS</div>
+                            <div>
+                                <h4 style="margin: 0;">Portfolio Overview</h4>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary);">Updated live</span>
+                            </div>
+                        </div>
+                        <span class="badge">System Running Smoothly</span>
                     </div>
-                    
-                    <div class="mock-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-size: 1.5rem;">Portfolio Intelligence</h3>
-                            <div style="font-size: 0.85rem; color: var(--highlight);">Updated Just Now</div>
+                    <div class="mock-grid">
+                        <div class="mock-card">
+                            <h4>Monthly Revenue</h4>
+                            <div class="mock-value">₦<span class="counter" data-target="145000000">0</span></div>
+                            <span style="color: var(--accent); font-size: 0.85rem; font-weight: 500;">+12.5% from last month</span>
                         </div>
-
-                        <div class="mock-grid">
-                            <div class="mock-card">
-                                <div class="mock-label">Total Revenue (30d)</div>
-                                <div class="mock-value" id="hero-rev">₦128.4M</div>
-                            </div>
-                            <div class="mock-card">
-                                <div class="mock-label">Occupancy Rate</div>
-                                <div class="mock-value">94.2%</div>
-                            </div>
-                            <div class="mock-card">
-                                <div class="mock-label">Pending Signatures</div>
-                                <div class="mock-value">12</div>
-                            </div>
+                        <div class="mock-card">
+                            <h4>Occupancy Rate</h4>
+                            <div class="mock-value"><span class="counter" data-target="94">0</span>%</div>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem;">Across 420 properties</span>
                         </div>
-
-                        <div class="mock-chart" id="hero-chart">
-                            </div>
+                        <div class="mock-card">
+                            <h4>Active Tenants</h4>
+                            <div class="mock-value"><span class="counter" data-target="389">0</span></div>
+                            <span style="color: var(--accent); font-size: 0.85rem; font-weight: 500;">99% Payment Success Rate</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </header>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Built for Scale</h2>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem;">Everything you need to manage properties, tenants, payments, and operations in one connected platform.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i data-lucide="credit-card"></i></div>
+                        <h3>Smart Payment Infrastructure</h3>
+                        <p>Collect rent, manage payouts, and track transactions automatically with secure built-in payment technology.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i data-lucide="users"></i></div>
+                        <h3>Tenant Management</h3>
+                        <p>Manage onboarding, verification, maintenance requests, and lease renewals from one seamless workflow.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i data-lucide="bar-chart-3"></i></div>
+                        <h3>Real-Time Property Insights</h3>
+                        <p>Monitor property performance, revenue growth, and operational insights in real time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Explanation -->
+        <section class="explanation" id="solutions">
+            <div class="container explanation-content">
+                <div>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 24px;">More than listings. <br>Built for modern <span class="text-gradient">Real Estate Operations</span>.</h2>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 24px;">ZURETH brings your entire real estate operation into one connected system. Manage properties, payments, tenants, and workflows without outdated tools slowing you down.</p>
+                    <ul style="list-style: none; color: var(--text-primary); font-weight: 500;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 12px;"><i data-lucide="check-circle-2" style="color: var(--accent);"></i> Automated Document Verification</li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 12px;"><i data-lucide="check-circle-2" style="color: var(--accent);"></i> Multi-currency Wallet</li>
+                        <li style="display: flex; gap: 12px;"><i data-lucide="check-circle-2" style="color: var(--accent);"></i> Real-time Sync</li>
+                    </ul>
+                </div>
+                <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <!-- Abstract UI Representation -->
+                    <i data-lucide="network" style="width: 120px; height: 120px; color: var(--primary); opacity: 0.5;"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA & Footer -->
+        <footer class="container">
+            <div style="background: linear-gradient(135deg, var(--primary), #0f172a); border-radius: 24px; padding: 64px; text-align: center; color: white; margin-bottom: 80px;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Ready to scale smarter?</h2>
+                <p style="margin-bottom: 32px; opacity: 0.9;">Join modern real estate brands building with ZURETH.</p>
+                <button class="btn" style="background: white; color: var(--primary);" onclick="navigateTo('signup')">Create an Account</button>
+            </div>
+
+            <div class="footer-grid">
+                <div>
+                    <a href="#" class="brand-logo" style="margin-bottom: 16px;">
+                        <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
+                        <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
+                    </a>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">The future of real estate operations in Nigeria and beyond.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#">Payments</a></li>
+                        <li><a href="#">Management</a></li>
+                        <li><a href="#">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-color); padding-top: 24px; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+                © 2026 Rehzorlt. Inc. All rights reserved.
+            </div>
+        </footer>
     </div>
 
-    <div class="auth-overlay" id="auth-modal">
-        <div class="auth-modal">
-            
-            <div class="auth-visuals">
+    <!-- =======================================================
+         PAGE 2: SIGN UP
+         ======================================================= -->
+    <div id="page-signup" class="page">
+        <div class="auth-container">
+            <div class="auth-left">
+                <a href="#" class="brand-logo" style="color: white;" onclick="navigateTo('home')">
+                    <!-- Always use the dark mode (light text) logo here since the background is always dark -->
+                    <img src="assets/zureth-logo-dark.svg" alt="ZURETH">
+                </a>
                 <div>
-                    <div class="brand-logo" style="margin-bottom: 60px;">
-                        <img src="assets/zureth-logo-light.svg" alt="ZURETH" style="height: 32px;">
-                    </div>
-                    <h2>Engineered for Scale.</h2>
-                    <p>Join top-tier developers, property managers, and real estate enterprises managing billions in assets on Zureth.</p>
+                    <h1 style="font-size: 3rem; margin-bottom: 16px;">Build the future of real estate.</h1>
+                    <p style="font-size: 1.1rem; opacity: 0.8;">Join enterprise operators managing billions in assets on Zureth's infrastructure.</p>
                 </div>
-                <div style="width: 100%; height: 200px; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-md); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center;">
-                    <div style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); animation: pulseData 3s infinite;"></div>
-                </div>
+                <div style="font-size: 0.85rem; opacity: 0.6;">© 2026 Rehzorlt Inc.</div>
             </div>
+            <div class="auth-right">
+                <div class="auth-form-wrapper">
+                    <h2>Create your account</h2>
+                    <p>Start your 14-day free trial with no card required.</p>
+                    
+                    <button class="btn btn-google">
+                        <svg viewBox="0 0 24 24" width="18" height="18" style="margin-right: 8px;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        Continue with Google
+                    </button>
 
-            <div class="auth-form-container" style="position: relative;">
-                <button class="close-modal" onclick="closeAuth()">×</button>
-                <h3 id="auth-title" style="font-size: 1.8rem; margin-bottom: 8px;">Create your account</h3>
-                <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 0.9rem;">Start building your real estate operating system.</p>
+                    <div class="divider">or</div>
 
-                <form onsubmit="event.preventDefault(); launchApp();">
-                    <div class="form-group" id="name-group">
-                        <label>Full Name</label>
-                        <input type="text" class="form-control" placeholder="Jane Doe">
-                    </div>
-                    <div class="form-group">
-                        <label>Work Email</label>
-                        <input type="email" class="form-control" placeholder="jane@company.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" class="form-control" placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 10px;">Continue →</button>
-                </form>
-
-                <div style="margin-top: 24px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
-                    <span id="auth-switch-text">Already have an account?</span> 
-                    <a href="#" style="color: var(--text); font-weight: 500;" onclick="toggleAuthMode()">Sign in</a>
+                    <form onsubmit="event.preventDefault(); navigateTo('dashboard');">
+                        <div class="form-group">
+                            <label>Work Email</label>
+                            <input type="email" class="form-control" placeholder="name@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" placeholder="Alfa Ojochegbe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Sign Up</button>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 24px; font-size: 0.9rem;">
+                        Already using ZURETH? <a href="#" onclick="navigateTo('signin')" style="color: var(--primary); font-weight: 500;">Sign in</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="app-view">
-        <aside class="app-sidebar">
-            
-            <div class="brand-logo" style="margin-bottom: 40px;">
-                <img src="assets/zureth-logo-dark.svg" alt="ZURETH" class="logo-for-light-mode">
-                <img src="assets/zureth-logo-light.svg" alt="ZURETH" class="logo-for-dark-mode">
-            </div>
-            
-            <div style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 16px;">MAIN MENU</div>
-            <a href="#" class="mock-nav-item active"><div class="mock-shape"></div> Dashboard</a>
-            <a href="#" class="mock-nav-item"><div class="mock-shape"></div> Properties</a>
-            <a href="#" class="mock-nav-item"><div class="mock-shape"></div> Tenants</a>
-            <a href="#" class="mock-nav-item"><div class="mock-shape"></div> Payments</a>
-            <a href="#" class="mock-nav-item"><div class="mock-shape"></div> Legal & Docs</a>
-            
-            <div style="margin-top: auto;">
-                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start;" onclick="exitApp()">← Exit to Site</button>
-            </div>
-        </aside>
+    <!-- =======================================================
+         PAGE 3: SIGN IN
+         ======================================================= -->
+    <div id="page-signin" class="page">
+        <div class="auth-container" style="justify-content: center; align-items: center; background: var(--bg-color);">
+            <div class="auth-form-wrapper" style="background: var(--card-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <a href="#" class="brand-logo" style="justify-content: center; margin-bottom: 16px;" onclick="navigateTo('home')">
+                        <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
+                        <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
+                    </a>
+                    <h2>Welcome back</h2>
+                    <p>Sign in to manage your properties, tenants, and operations.</p>
+                </div>
 
-        <main class="app-main">
-            <header class="app-header">
-                <h2>Overview</h2>
-                <div class="nav-actions">
-                    <button class="btn btn-secondary" onclick="toggleTheme()" aria-label="Toggle Theme">☾ / ☀</button>
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">JD</div>
-                </div>
-            </header>
-
-            <div class="mock-grid" style="margin-bottom: 32px;">
-                <div class="mock-card">
-                    <div class="mock-label">Net Revenue YTD</div>
-                    <div class="mock-value">₦452.8M</div>
-                    <div style="font-size: 0.8rem; color: var(--highlight); margin-top: 8px;">↑ 12.5% vs last year</div>
-                </div>
-                <div class="mock-card">
-                    <div class="mock-label">Active Leases</div>
-                    <div class="mock-value">1,204</div>
-                    <div style="font-size: 0.8rem; color: var(--highlight); margin-top: 8px;">↑ 48 new this month</div>
-                </div>
-                <div class="mock-card">
-                    <div class="mock-label">Maintenance Requests</div>
-                    <div class="mock-value">14</div>
-                    <div style="font-size: 0.8rem; color: var(--danger); margin-top: 8px;">3 require urgent attention</div>
-                </div>
-            </div>
-
-            <div class="mock-card" style="height: 400px; display: flex; flex-direction: column;">
-                <h3 style="margin-bottom: 24px; font-size: 1.2rem;">Cash Flow Analysis</h3>
-                <div class="mock-chart" id="app-chart">
+                <form onsubmit="event.preventDefault(); navigateTo('dashboard');">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-control" placeholder="name@company.com" required>
                     </div>
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between;">
+                            <label>Password</label>
+                            <a href="#" style="font-size: 0.85rem; color: var(--primary);">Forgot Password?</a>
+                        </div>
+                        <input type="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Sign In</button>
+                </form>
+
+                <p style="text-align: center; margin-top: 24px; font-size: 0.9rem;">
+                    New to ZURETH? <a href="#" onclick="navigateTo('signup')" style="color: var(--primary); font-weight: 500;">Sign up</a>
+                </p>
             </div>
-        </main>
+        </div>
     </div>
 
+    <!-- =======================================================
+         PAGE 4: DASHBOARD (STATIC APP UI)
+         ======================================================= -->
+    <div id="page-dashboard" class="page">
+        <div class="app-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <a href="#" class="brand-logo" onclick="navigateTo('home')">
+                        <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
+                        <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
+                    </a>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="sidebar-link active"><i data-lucide="layout-dashboard" style="width: 18px;"></i> Dashboard</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="building" style="width: 18px;"></i> Properties</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="users" style="width: 18px;"></i> Tenants</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="calendar" style="width: 18px;"></i> Bookings</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="credit-card" style="width: 18px;"></i> Payments</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="file-text" style="width: 18px;"></i> Documents</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 18px;"></i> Analytics</a>
+                    <a href="#" class="sidebar-link"><i data-lucide="message-square" style="width: 18px;"></i> Messages</a>
+                </nav>
+                <div style="padding: 0 16px;">
+                    <a href="#" class="sidebar-link"><i data-lucide="settings" style="width: 18px;"></i> Settings</a>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Topbar -->
+                <header class="topbar">
+                    <div class="search-bar">
+                        <i data-lucide="search" style="width: 16px; color: var(--text-secondary);"></i>
+                        <input type="text" placeholder="Search tenants, properties, transactions...">
+                    </div>
+                    <div class="topbar-actions">
+                        <button class="icon-btn"><i data-lucide="bell"></i></button>
+                        <div class="avatar">JD</div>
+                    </div>
+                </header>
+
+                <!-- Dashboard Scrollable -->
+                <div class="dashboard-scroll">
+                    <div class="dashboard-header">
+                        <div>
+                            <h2 style="font-size: 1.75rem;">Overview</h2>
+                            <p style="color: var(--text-secondary);">Here's what's happening with your properties today.</p>
+                        </div>
+                        <button class="btn btn-primary"><i data-lucide="plus" style="width: 16px;"></i> Add Property</button>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="mock-grid" style="margin-bottom: 32px;">
+                        <div class="mock-card">
+                            <h4>Total Balance</h4>
+                            <div class="mock-value">₦42,500,000</div>
+                            <span style="color: var(--accent); font-size: 0.85rem;"><i data-lucide="trending-up" style="width: 14px; display: inline-block; vertical-align: middle;"></i> +8.2% this month</span>
+                        </div>
+                        <div class="mock-card">
+                            <h4>Pending Collections</h4>
+                            <div class="mock-value">₦3,200,000</div>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem;">From 12 tenants</span>
+                        </div>
+                        <div class="mock-card">
+                            <h4>Vacant Units</h4>
+                            <div class="mock-value">14</div>
+                            <span style="color: #ef4444; font-size: 0.85rem;">Requires immediate action</span>
+                        </div>
+                    </div>
+
+                    <!-- Charts & Feeds Row -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+                        
+                        <!-- Static SVG Chart Mock -->
+                        <div class="chart-card">
+                            <h3 style="margin-bottom: 24px; font-size: 1.1rem;">Revenue Analytics (YTD)</h3>
+                            <svg width="100%" height="200" viewBox="0 0 500 200" preserveAspectRatio="none" style="overflow: visible;">
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="50" x2="500" y2="50" stroke="var(--border-color)" stroke-dasharray="4"/>
+                                <line x1="0" y1="100" x2="500" y2="100" stroke="var(--border-color)" stroke-dasharray="4"/>
+                                <line x1="0" y1="150" x2="500" y2="150" stroke="var(--border-color)" stroke-dasharray="4"/>
+                                <line x1="0" y1="200" x2="500" y2="200" stroke="var(--border-color)"/>
+                                
+                                <!-- Area Gradient -->
+                                <defs>
+                                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.3"/>
+                                        <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                                <polygon points="0,200 0,150 100,120 200,140 300,80 400,90 500,40 500,200" fill="url(#areaGrad)"/>
+                                
+                                <!-- Line Chart -->
+                                <polyline points="0,150 100,120 200,140 300,80 400,90 500,40" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                
+                                <!-- Data Points -->
+                                <circle cx="100" cy="120" r="4" fill="var(--bg-color)" stroke="var(--primary)" stroke-width="2"/>
+                                <circle cx="300" cy="80" r="4" fill="var(--bg-color)" stroke="var(--primary)" stroke-width="2"/>
+                                <circle cx="500" cy="40" r="4" fill="var(--bg-color)" stroke="var(--primary)" stroke-width="2"/>
+                            </svg>
+                        </div>
+
+                        <!-- Activity Feed -->
+                        <div class="activity-feed">
+                            <h3 style="margin-bottom: 24px; font-size: 1.1rem;">Recent Activity</h3>
+                            <div class="feed-item">
+                                <div class="feed-icon"><i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i></div>
+                                <div>
+                                    <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 2px;">Rent Paid: Unit 402</p>
+                                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Adebayo Johnson paid ₦850,000</p>
+                                </div>
+                            </div>
+                            <div class="feed-item">
+                                <div class="feed-icon" style="background: rgba(29, 78, 216, 0.1); color: var(--primary);"><i data-lucide="file-signature" style="width: 16px; height: 16px;"></i></div>
+                                <div>
+                                    <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 2px;">Lease Signed</p>
+                                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Victoria Island Complex, Unit B</p>
+                                </div>
+                            </div>
+                            <div class="feed-item">
+                                <div class="feed-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><i data-lucide="wrench" style="width: 16px; height: 16px;"></i></div>
+                                <div>
+                                    <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 2px;">Maintenance Request</p>
+                                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Plumbing issue in Lekki Villa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Placeholder -->
+                    <div style="margin-top: 32px; background: linear-gradient(to right, rgba(29, 78, 216, 0.05), rgba(20, 184, 166, 0.05)); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; display: flex; gap: 16px; align-items: flex-start;">
+                        <i data-lucide="sparkles" style="color: var(--accent); margin-top: 4px;"></i>
+                        <div>
+                            <h4 style="margin-bottom: 4px;">ZURETH Intelligence Insight</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary);">Based on market trends in Lagos, increasing the rent for Victoria Island Complex renewals by 4.5% will align with optimal yield strategies without increasing churn risk.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         JAVASCRIPT LOGIC
+         ======================================================= -->
     <script>
-        // 1. Theme Engineering
-        const htmlElement = document.documentElement;
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Single Page App Router Logic
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show target page
+            document.getElementById('page-' + pageId).classList.add('active');
+            window.scrollTo(0, 0);
+
+            // Re-trigger counter animations if navigating to home
+            if(pageId === 'home') {
+                animateCounters();
+            }
+        }
+
+        // Theme Toggling Logic
         function toggleTheme() {
-            const current = htmlElement.getAttribute('data-theme');
-            htmlElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-        }
-
-        // 2. State Management for Views
-        const publicView = document.getElementById('public-view');
-        const appView = document.getElementById('app-view');
-        const authModal = document.getElementById('auth-modal');
-
-        function launchApp() {
-            closeAuth();
-            publicView.style.display = 'none';
-            appView.classList.add('active');
-            initCharts('app-chart', 30); // Initialize wider chart for full dashboard
-        }
-
-        function exitApp() {
-            appView.classList.remove('active');
-            publicView.style.display = 'block';
-        }
-
-        // 3. Authentication Modal Logic
-        let currentAuthMode = 'signup';
-        const nameGroup = document.getElementById('name-group');
-        const authTitle = document.getElementById('auth-title');
-        const authSwitchText = document.getElementById('auth-switch-text');
-
-        function openAuth(mode) {
-            authModal.classList.add('active');
-            if (mode !== currentAuthMode) toggleAuthMode();
-        }
-
-        function closeAuth() {
-            authModal.classList.remove('active');
-        }
-
-        function toggleAuthMode() {
-            currentAuthMode = currentAuthMode === 'signup' ? 'signin' : 'signup';
-            if (currentAuthMode === 'signin') {
-                authTitle.innerText = "Welcome back";
-                nameGroup.style.display = "none";
-                authSwitchText.innerHTML = "Don't have an account? <a href='#' style='color: var(--text); font-weight: 500;' onclick='toggleAuthMode()'>Sign up</a>";
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            
+            // Update Icon
+            const icon = document.getElementById('theme-icon');
+            if(newTheme === 'dark') {
+                icon.setAttribute('data-lucide', 'sun');
             } else {
-                authTitle.innerText = "Create your account";
-                nameGroup.style.display = "block";
-                authSwitchText.innerHTML = "Already have an account? <a href='#' style='color: var(--text); font-weight: 500;' onclick='toggleAuthMode()'>Sign in</a>";
+                icon.setAttribute('data-lucide', 'moon');
             }
+            lucide.createIcons();
+            
+            // Note: The Logo system swap is now handled entirely by CSS using the .logo-light and .logo-dark classes.
         }
 
-        // 4. Live Data & Chart Simulation (Fintech Polish)
-        function initCharts(containerId, count) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ''; // Clear existing
-            for (let i = 0; i < count; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'chart-bar';
-                if (i % 5 === 0) bar.classList.add('highlight'); // Emphasize certain metrics
-                bar.style.height = `${Math.floor(Math.random() * 70) + 10}%`;
-                container.appendChild(bar);
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if(navbar) {
+                if(window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
             }
+        });
 
-            // Animate to simulate live data
-            setInterval(() => {
-                if (container.offsetParent === null) return; // Don't animate if hidden
-                const bars = container.querySelectorAll('.chart-bar');
-                bars.forEach(bar => {
-                    if (Math.random() > 0.6) {
-                        bar.style.height = `${Math.floor(Math.random() * 80) + 20}%`;
+        // Animated Number Counters (Simple JS)
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200; // The lower the slower
+
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const updateCount = () => {
+                    const current = +counter.innerText.replace(/,/g, '');
+                    const inc = target / speed;
+
+                    if (current < target) {
+                        counter.innerText = Math.ceil(current + inc).toLocaleString();
+                        setTimeout(updateCount, 10);
+                    } else {
+                        counter.innerText = target.toLocaleString();
                     }
-                });
-            }, 1500);
+                };
+                counter.innerText = '0';
+                updateCount();
+            });
         }
 
-        // Initialize Hero Chart
-        initCharts('hero-chart', 15);
+        // Run counters initially
+        setTimeout(animateCounters, 500);
 
-        // Simulated Hero Revenue Ticker
-        const heroRev = document.getElementById('hero-rev');
-        let revValue = 128.4;
-        setInterval(() => {
-            if (publicView.style.display !== 'none' && Math.random() > 0.7) {
-                revValue += 0.1;
-                heroRev.innerText = `₦${revValue.toFixed(1)}M`;
-                heroRev.style.color = 'var(--highlight)';
-                setTimeout(() => heroRev.style.color = '', 300);
-            }
-        }, 2000);
     </script>
 </body>
 </html>
