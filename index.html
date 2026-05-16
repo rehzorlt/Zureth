@@ -165,7 +165,6 @@
             width: auto;
         }
 
-        /* Logo Theme Switching */
         .brand-logo img.logo-dark { display: none; }
         [data-theme="dark"] .brand-logo img.logo-light { display: none; }
         [data-theme="dark"] .brand-logo img.logo-dark { display: block; }
@@ -179,7 +178,7 @@
             left: 0;
             width: 100%;
             padding: 20px 0;
-            z-index: 100;
+            z-index: 1000;
             transition: all 0.3s ease;
         }
 
@@ -195,6 +194,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .nav-menu-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            width: 100%;
+            justify-content: space-between;
         }
 
         .nav-links {
@@ -218,6 +225,11 @@
             display: flex;
             gap: 16px;
             align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            color: var(--text-primary);
         }
 
         /* Hero Section */
@@ -256,7 +268,13 @@
             margin: 0 auto 40px;
         }
 
-        /* Hero Dashboard Mock (Floating) */
+        .hero-actions {
+            display: flex; 
+            gap: 16px; 
+            justify-content: center;
+        }
+
+        /* Hero Dashboard Mock */
         .hero-dashboard-mock {
             max-width: 1000px;
             margin: 60px auto 0;
@@ -384,17 +402,6 @@
             align-items: center;
         }
 
-        /* Testimonials */
-        .testimonials { padding: 100px 0; }
-        .testimonial-card {
-            border: 1px solid var(--border-color);
-            padding: 32px;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-style: italic;
-            color: var(--text-secondary);
-        }
-
         /* Footer */
         footer {
             padding: 64px 0 32px;
@@ -452,6 +459,7 @@
         .auth-form-wrapper {
             width: 100%;
             max-width: 400px;
+            padding: 0 24px;
         }
 
         .auth-form-wrapper h2 {
@@ -515,8 +523,8 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .divider:not(:empty)::before { margin-right: .25em; }
-        .divider:not(:empty)::after { margin-left: .25em; }
+        .divider:not(:empty):before { margin-right: .25em; }
+        .divider:not(:empty):after { margin-left: .25em; }
 
         /* =========================================
            PAGE: DASHBOARD (STATIC APP UI)
@@ -526,6 +534,7 @@
             height: 100vh;
             overflow: hidden;
             background-color: var(--bg-color);
+            position: relative;
         }
 
         /* Sidebar */
@@ -536,11 +545,20 @@
             display: flex;
             flex-direction: column;
             padding: 24px 0;
+            z-index: 50;
         }
 
         .sidebar-brand {
             padding: 0 24px;
             margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-close {
+            display: none;
+            color: var(--text-primary);
         }
 
         .sidebar-nav {
@@ -583,6 +601,17 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 32px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            color: var(--text-primary);
         }
 
         .search-bar {
@@ -644,6 +673,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dashboard-content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
         }
 
         /* Charts & Tables Mocks */
@@ -652,7 +689,6 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 24px;
-            grid-column: span 2;
         }
 
         .activity-feed {
@@ -689,22 +725,76 @@
             color: var(--accent);
         }
 
-        /* Responsive */
+        /* =========================================
+           RESPONSIVE MOBILE STYLES
+           ========================================= */
         @media (max-width: 992px) {
-            .hero h1 { font-size: 3rem; }
+            /* General Typography & Layout */
+            .hero h1 { font-size: 2.75rem; }
+            .hero { padding-top: 120px; padding-bottom: 60px; }
+            .features, .explanation { padding: 60px 0; }
             .features-grid, .mock-grid { grid-template-columns: 1fr; }
             .explanation-content { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr 1fr; }
+            
+            /* Auth Pages */
             .auth-container { flex-direction: column; }
-            .auth-left { padding: 40px; min-height: 300px; }
-            .sidebar { position: absolute; transform: translateX(-100%); z-index: 1000; height: 100%; transition: transform 0.3s ease; }
+            .auth-left { padding: 40px; min-height: 250px; }
+            .auth-form-wrapper { padding: 40px 24px; max-width: 100%; }
+
+            /* Mobile Navigation */
+            .mobile-menu-btn { display: block; }
+            .nav-menu-wrapper {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--card-bg);
+                padding: 24px;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                gap: 24px;
+            }
+            .nav-menu-wrapper.active { display: flex; }
+            .nav-links { flex-direction: column; width: 100%; gap: 16px; }
+            .nav-actions { flex-direction: column; width: 100%; }
+            .nav-actions .btn { width: 100%; }
+
+            /* Dashboard Layout Updates */
+            .sidebar-toggle { display: block; }
+            .sidebar { 
+                position: absolute; 
+                transform: translateX(-100%); 
+                height: 100%; 
+                box-shadow: var(--shadow-lg); 
+            }
             .sidebar.open { transform: translateX(0); }
+            .sidebar-close { display: block; }
+            .dashboard-content-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            /* Deeper Mobile Adjustments */
+            .hero h1 { font-size: 2.25rem; }
+            .hero-actions { flex-direction: column; }
+            .hero-actions .btn { width: 100%; }
+            .hero-dashboard-mock { padding: 16px; margin-top: 40px; }
+            .mock-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .section-header h2 { font-size: 2rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            
+            /* Dashboard Mobile Refinements */
+            .topbar { padding: 0 16px; }
+            .search-bar { display: none; } /* Replaced with icon space or hidden on mobile */
+            .dashboard-scroll { padding: 16px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Theme Toggle Button (Global floating for demo purposes) -->
+    <!-- Theme Toggle Button -->
     <button onclick="toggleTheme()" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 50%; box-shadow: var(--shadow-lg);" title="Toggle Dark/Light Mode">
         <i data-lucide="moon" id="theme-icon"></i>
     </button>
@@ -720,15 +810,23 @@
                     <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
                     <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
                 </a>
-                <div class="nav-links">
-                    <a href="#features">Platform</a>
-                    <a href="#solutions">Solutions</a>
-                    <a href="#Clients">Clients</a>
-                    <a href="#pricing">Pricing</a>
-                </div>
-                <div class="nav-actions">
-                    <button class="btn btn-secondary" onclick="navigateTo('signin')">Sign In</button>
-                    <button class="btn btn-primary" onclick="navigateTo('signup')">Get Started</button>
+                
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" onclick="toggleMobileNav()">
+                    <i data-lucide="menu"></i>
+                </button>
+
+                <div class="nav-menu-wrapper" id="navMenu">
+                    <div class="nav-links">
+                        <a href="#features" onclick="toggleMobileNav()">Platform</a>
+                        <a href="#solutions" onclick="toggleMobileNav()">Solutions</a>
+                        <a href="#Clients" onclick="toggleMobileNav()">Clients</a>
+                        <a href="#pricing" onclick="toggleMobileNav()">Pricing</a>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-secondary" onclick="navigateTo('signin')">Sign In</button>
+                        <button class="btn btn-primary" onclick="navigateTo('signup')">Get Started</button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -738,7 +836,7 @@
             <div class="container">
                 <h1>The Smart operating system for <span class="text-gradient">Modern Real Estate</span></h1>
                 <p>Powerful real estate infrastructure for property management, tenant operations, payments, and real-time insights. Built to scale with confidence.</p>
-                <div style="display: flex; gap: 16px; justify-content: center;">
+                <div class="hero-actions">
                     <button class="btn btn-primary" onclick="navigateTo('signup')">Get Started <i data-lucide="arrow-right" style="width: 18px;"></i></button>
                     <button class="btn btn-secondary" onclick="navigateTo('dashboard')">View Platform</button>
                 </div>
@@ -816,7 +914,6 @@
                     </ul>
                 </div>
                 <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; height: 400px; display: flex; align-items: center; justify-content: center;">
-                    <!-- Abstract UI Representation -->
                     <i data-lucide="network" style="width: 120px; height: 120px; color: var(--primary); opacity: 0.5;"></i>
                 </div>
             </div>
@@ -876,7 +973,6 @@
         <div class="auth-container">
             <div class="auth-left">
                 <a href="#" class="brand-logo" style="color: white;" onclick="navigateTo('home')">
-                    <!-- Always use the dark mode (light text) logo here since the background is always dark -->
                     <img src="assets/zureth-logo-dark.svg" alt="ZURETH">
                 </a>
                 <div>
@@ -964,12 +1060,14 @@
     <div id="page-dashboard" class="page">
         <div class="app-layout">
             <!-- Sidebar -->
-            <aside class="sidebar">
+            <aside class="sidebar" id="dashboardSidebar">
                 <div class="sidebar-brand">
                     <a href="#" class="brand-logo" onclick="navigateTo('home')">
                         <img src="assets/zureth-logo-light.svg" class="logo-light" alt="ZURETH">
                         <img src="assets/zureth-logo-dark.svg" class="logo-dark" alt="ZURETH">
                     </a>
+                    <!-- Mobile Close Button -->
+                    <button class="sidebar-close" onclick="toggleDashboardSidebar()"><i data-lucide="x"></i></button>
                 </div>
                 <nav class="sidebar-nav">
                     <a href="#" class="sidebar-link active"><i data-lucide="layout-dashboard" style="width: 18px;"></i> Dashboard</a>
@@ -990,9 +1088,15 @@
             <main class="main-content">
                 <!-- Topbar -->
                 <header class="topbar">
-                    <div class="search-bar">
-                        <i data-lucide="search" style="width: 16px; color: var(--text-secondary);"></i>
-                        <input type="text" placeholder="Search tenants, properties, transactions...">
+                    <div class="topbar-left">
+                        <!-- Mobile Sidebar Toggle -->
+                        <button class="sidebar-toggle" onclick="toggleDashboardSidebar()">
+                            <i data-lucide="menu"></i>
+                        </button>
+                        <div class="search-bar">
+                            <i data-lucide="search" style="width: 16px; color: var(--text-secondary);"></i>
+                            <input type="text" placeholder="Search tenants, properties, transactions...">
+                        </div>
                     </div>
                     <div class="topbar-actions">
                         <button class="icon-btn"><i data-lucide="bell"></i></button>
@@ -1030,7 +1134,7 @@
                     </div>
 
                     <!-- Charts & Feeds Row -->
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+                    <div class="dashboard-content-grid">
                         
                         <!-- Static SVG Chart Mock -->
                         <div class="chart-card">
@@ -1111,6 +1215,10 @@
 
         // Single Page App Router Logic
         function navigateTo(pageId) {
+            // Close mobile menus if they are open
+            document.getElementById('navMenu').classList.remove('active');
+            document.getElementById('dashboardSidebar').classList.remove('open');
+
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
@@ -1123,6 +1231,18 @@
             if(pageId === 'home') {
                 animateCounters();
             }
+        }
+
+        // Mobile Nav Toggle (Homepage)
+        function toggleMobileNav() {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Mobile Sidebar Toggle (Dashboard)
+        function toggleDashboardSidebar() {
+            const sidebar = document.getElementById('dashboardSidebar');
+            sidebar.classList.toggle('open');
         }
 
         // Theme Toggling Logic
@@ -1140,8 +1260,6 @@
                 icon.setAttribute('data-lucide', 'moon');
             }
             lucide.createIcons();
-            
-            // Note: The Logo system swap is now handled entirely by CSS using the .logo-light and .logo-dark classes.
         }
 
         // Navbar Scroll Effect
@@ -1156,7 +1274,7 @@
             }
         });
 
-        // Animated Number Counters (Simple JS)
+        // Animated Number Counters
         function animateCounters() {
             const counters = document.querySelectorAll('.counter');
             const speed = 200; // The lower the slower
